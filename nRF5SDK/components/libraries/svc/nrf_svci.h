@@ -154,7 +154,8 @@ extern "C" {
                R12 containing the SVCI number */                        \
             __ASM __volatile                                            \
             (                                                           \
-                "  ldr.w r12, =%0     \n"                               \
+                "movw r0, %0          \n"				                \
+		        "movt r0, %1          \n"                              	\
                 "  svc %1             \n"                               \
                 "  bx lr              \n"                               \
                 "  .ltorg"                                              \
