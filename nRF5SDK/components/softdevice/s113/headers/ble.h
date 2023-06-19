@@ -659,3 +659,119 @@ SVCALL(SD_BLE_OPT_GET, uint32_t, sd_ble_opt_get(uint32_t opt_id, ble_opt_t *p_op
   @}
   @}
 */
+
+#ifdef __clang__
+
+#ifndef _CLANG_BLE_H_
+#define _CLANG_BLE_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// prevent from upgrading nRF52 header files more than once
+#define NRF_CLANG_SUPPORT 1
+
+// define system call macros only once
+#ifndef _SYSCALL_ARGS
+
+#define _SYSCALL_ARGS(_SC_, ...) \
+   __asm__ __volatile__ ( \
+      "svc %[SC]" \
+         : "=r"(r0) : [SC]"I" ((uint16_t)_SC_), ##__VA_ARGS__ : "memory"); \
+   return r0; \
+
+#define _SCC(X) ((long) (X))
+
+#define _SYSCALL0(_SC_) \
+   register long r0 __asm__("r0"); \
+   _SYSCALL_ARGS(_SC_); \
+
+#define _SYSCALL1(_SC_, _a_) \
+   register long r0 __asm__("r0") = _SCC(_a_); \
+   _SYSCALL_ARGS(_SC_, "0"(r0)); \
+
+#define _SYSCALL2(_SC_, _a_, _b_) \
+   register long r0 __asm__("r0") = _SCC(_a_); \
+   register long r1 __asm__("r1") = _SCC(_b_); \
+   _SYSCALL_ARGS(_SC_, "0"(r0), "r"(r1)); \
+
+#define _SYSCALL3(_SC_, _a_, _b_, _c_) \
+   register long r0 __asm__("r0") = _SCC(_a_); \
+   register long r1 __asm__("r1") = _SCC(_b_); \
+   register long r2 __asm__("r2") = _SCC(_c_); \
+   _SYSCALL_ARGS(_SC_, "0"(r0), "r"(r1), "r"(r2)); \
+
+#define _SYSCALL4(_SC_, _a_, _b_, _c_, _d_) \
+   register long r0 __asm__("r0") = _SCC(_a_); \
+   register long r1 __asm__("r1") = _SCC(_b_); \
+   register long r2 __asm__("r2") = _SCC(_c_); \
+   register long r3 __asm__("r3") = _SCC(_d_); \
+   _SYSCALL_ARGS(_SC_, "0"(r0), "r"(r1), "r"(r2), "r"(r3)); \
+
+#endif // SYSCALL_CP
+
+static inline uint32_t
+sd_ble_enable(uint32_t * p_app_ram_base) {
+   _SYSCALL1(SD_BLE_ENABLE, p_app_ram_base);
+}
+
+static inline uint32_t
+sd_ble_cfg_set(uint32_t cfg_id, ble_cfg_t const * p_cfg, uint32_t app_ram_base) {
+   _SYSCALL3(SD_BLE_CFG_SET, cfg_id, p_cfg, app_ram_base);
+}
+
+static inline uint32_t
+sd_ble_evt_get(uint8_t *p_dest, uint16_t *p_len) {
+   _SYSCALL2(SD_BLE_EVT_GET, p_dest, p_len);
+}
+
+static inline uint32_t
+sd_ble_uuid_vs_add(ble_uuid128_t const *p_vs_uuid, uint8_t *p_uuid_type) {
+   _SYSCALL2(SD_BLE_UUID_VS_ADD, p_vs_uuid, p_uuid_type);
+}
+
+static inline uint32_t
+sd_ble_uuid_vs_remove(uint8_t *p_uuid_type) {
+   _SYSCALL1(SD_BLE_UUID_VS_REMOVE, p_uuid_type);
+}
+
+static inline uint32_t
+sd_ble_uuid_decode(uint8_t uuid_le_len, uint8_t const *p_uuid_le, ble_uuid_t *p_uuid) {
+   _SYSCALL3(SD_BLE_UUID_DECODE, uuid_le_len, p_uuid_le, p_uuid);
+}
+
+static inline uint32_t
+sd_ble_uuid_encode(ble_uuid_t const *p_uuid, uint8_t *p_uuid_le_len, uint8_t *p_uuid_le) {
+   _SYSCALL3(SD_BLE_UUID_ENCODE, p_uuid, p_uuid_le_len, p_uuid_le);
+}
+
+static inline uint32_t
+sd_ble_version_get(ble_version_t *p_version) {
+   _SYSCALL1(SD_BLE_VERSION_GET, p_version);
+}
+
+static inline uint32_t
+sd_ble_user_mem_reply(uint16_t conn_handle, ble_user_mem_block_t const *p_block) {
+   _SYSCALL2(SD_BLE_USER_MEM_REPLY, conn_handle, p_block);
+}
+
+static inline uint32_t
+sd_ble_opt_set(uint32_t opt_id, ble_opt_t const *p_opt) {
+   _SYSCALL2(SD_BLE_OPT_SET, opt_id, p_opt);
+}
+
+static inline uint32_t
+sd_ble_opt_get(uint32_t opt_id, ble_opt_t *p_opt) {
+   _SYSCALL2(SD_BLE_OPT_GET, opt_id, p_opt);
+}
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // _CLANG_BLE_H_
+
+#endif // __clang__
+

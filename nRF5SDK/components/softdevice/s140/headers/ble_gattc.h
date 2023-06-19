@@ -713,3 +713,119 @@ __STATIC_INLINE uint32_t sd_ble_gattc_evt_char_val_by_uuid_read_rsp_iter(ble_gat
 /**
   @}
 */
+
+#ifdef __clang__
+
+#ifndef _CLANG_BLE_GATTC_H_
+#define _CLANG_BLE_GATTC_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// prevent from upgrading nRF52 header files more than once
+#define NRF_CLANG_SUPPORT 1
+
+// define system call macros only once
+#ifndef _SYSCALL_ARGS
+
+#define _SYSCALL_ARGS(_SC_, ...) \
+   __asm__ __volatile__ ( \
+      "svc %[SC]" \
+         : "=r"(r0) : [SC]"I" ((uint16_t)_SC_), ##__VA_ARGS__ : "memory"); \
+   return r0; \
+
+#define _SCC(X) ((long) (X))
+
+#define _SYSCALL0(_SC_) \
+   register long r0 __asm__("r0"); \
+   _SYSCALL_ARGS(_SC_); \
+
+#define _SYSCALL1(_SC_, _a_) \
+   register long r0 __asm__("r0") = _SCC(_a_); \
+   _SYSCALL_ARGS(_SC_, "0"(r0)); \
+
+#define _SYSCALL2(_SC_, _a_, _b_) \
+   register long r0 __asm__("r0") = _SCC(_a_); \
+   register long r1 __asm__("r1") = _SCC(_b_); \
+   _SYSCALL_ARGS(_SC_, "0"(r0), "r"(r1)); \
+
+#define _SYSCALL3(_SC_, _a_, _b_, _c_) \
+   register long r0 __asm__("r0") = _SCC(_a_); \
+   register long r1 __asm__("r1") = _SCC(_b_); \
+   register long r2 __asm__("r2") = _SCC(_c_); \
+   _SYSCALL_ARGS(_SC_, "0"(r0), "r"(r1), "r"(r2)); \
+
+#define _SYSCALL4(_SC_, _a_, _b_, _c_, _d_) \
+   register long r0 __asm__("r0") = _SCC(_a_); \
+   register long r1 __asm__("r1") = _SCC(_b_); \
+   register long r2 __asm__("r2") = _SCC(_c_); \
+   register long r3 __asm__("r3") = _SCC(_d_); \
+   _SYSCALL_ARGS(_SC_, "0"(r0), "r"(r1), "r"(r2), "r"(r3)); \
+
+#endif // SYSCALL_CP
+
+static inline uint32_t
+sd_ble_gattc_primary_services_discover(uint16_t conn_handle, uint16_t start_handle, ble_uuid_t const *p_srvc_uuid) {
+   _SYSCALL3(SD_BLE_GATTC_PRIMARY_SERVICES_DISCOVER, conn_handle, start_handle, p_srvc_uuid);
+}
+
+static inline uint32_t
+sd_ble_gattc_relationships_discover(uint16_t conn_handle, ble_gattc_handle_range_t const *p_handle_range) {
+   _SYSCALL2(SD_BLE_GATTC_RELATIONSHIPS_DISCOVER, conn_handle, p_handle_range);
+}
+
+static inline uint32_t
+sd_ble_gattc_characteristics_discover(uint16_t conn_handle, ble_gattc_handle_range_t const *p_handle_range) {
+   _SYSCALL2(SD_BLE_GATTC_CHARACTERISTICS_DISCOVER, conn_handle, p_handle_range);
+}
+
+static inline uint32_t
+sd_ble_gattc_descriptors_discover(uint16_t conn_handle, ble_gattc_handle_range_t const *p_handle_range) {
+   _SYSCALL2(SD_BLE_GATTC_DESCRIPTORS_DISCOVER, conn_handle, p_handle_range);
+}
+
+static inline uint32_t
+sd_ble_gattc_char_value_by_uuid_read(uint16_t conn_handle, ble_uuid_t const *p_uuid, ble_gattc_handle_range_t const *p_handle_range) {
+   _SYSCALL3(SD_BLE_GATTC_CHAR_VALUE_BY_UUID_READ, conn_handle, p_uuid, p_handle_range);
+}
+
+static inline uint32_t
+sd_ble_gattc_read(uint16_t conn_handle, uint16_t handle, uint16_t offset) {
+   _SYSCALL3(SD_BLE_GATTC_READ, conn_handle, handle, offset);
+}
+
+static inline uint32_t
+sd_ble_gattc_char_values_read(uint16_t conn_handle, uint16_t const *p_handles, uint16_t handle_count) {
+   _SYSCALL3(SD_BLE_GATTC_CHAR_VALUES_READ, conn_handle, p_handles, handle_count);
+}
+
+static inline uint32_t
+sd_ble_gattc_write(uint16_t conn_handle, ble_gattc_write_params_t const *p_write_params) {
+   _SYSCALL2(SD_BLE_GATTC_WRITE, conn_handle, p_write_params);
+}
+
+static inline uint32_t
+sd_ble_gattc_hv_confirm(uint16_t conn_handle, uint16_t handle) {
+   _SYSCALL2(SD_BLE_GATTC_HV_CONFIRM, conn_handle, handle);
+}
+
+static inline uint32_t
+sd_ble_gattc_attr_info_discover(uint16_t conn_handle, ble_gattc_handle_range_t const * p_handle_range) {
+   _SYSCALL2(SD_BLE_GATTC_ATTR_INFO_DISCOVER, conn_handle, p_handle_range);
+}
+
+static inline uint32_t
+sd_ble_gattc_exchange_mtu_request(uint16_t conn_handle, uint16_t client_rx_mtu) {
+   _SYSCALL2(SD_BLE_GATTC_EXCHANGE_MTU_REQUEST, conn_handle, client_rx_mtu);
+}
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // _CLANG_BLE_GATTC_H_
+
+#endif // __clang__
+

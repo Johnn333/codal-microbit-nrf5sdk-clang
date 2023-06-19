@@ -369,3 +369,84 @@ SVCALL(SD_SOFTDEVICE_VECTOR_TABLE_BASE_SET, uint32_t, sd_softdevice_vector_table
 /**
   @}
 */
+
+#ifdef __clang__
+
+#ifndef _CLANG_NRF_SDM_H_
+#define _CLANG_NRF_SDM_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// prevent from upgrading nRF52 header files more than once
+#define NRF_CLANG_SUPPORT 1
+
+// define system call macros only once
+#ifndef _SYSCALL_ARGS
+
+#define _SYSCALL_ARGS(_SC_, ...) \
+   __asm__ __volatile__ ( \
+      "svc %[SC]" \
+         : "=r"(r0) : [SC]"I" ((uint16_t)_SC_), ##__VA_ARGS__ : "memory"); \
+   return r0; \
+
+#define _SCC(X) ((long) (X))
+
+#define _SYSCALL0(_SC_) \
+   register long r0 __asm__("r0"); \
+   _SYSCALL_ARGS(_SC_); \
+
+#define _SYSCALL1(_SC_, _a_) \
+   register long r0 __asm__("r0") = _SCC(_a_); \
+   _SYSCALL_ARGS(_SC_, "0"(r0)); \
+
+#define _SYSCALL2(_SC_, _a_, _b_) \
+   register long r0 __asm__("r0") = _SCC(_a_); \
+   register long r1 __asm__("r1") = _SCC(_b_); \
+   _SYSCALL_ARGS(_SC_, "0"(r0), "r"(r1)); \
+
+#define _SYSCALL3(_SC_, _a_, _b_, _c_) \
+   register long r0 __asm__("r0") = _SCC(_a_); \
+   register long r1 __asm__("r1") = _SCC(_b_); \
+   register long r2 __asm__("r2") = _SCC(_c_); \
+   _SYSCALL_ARGS(_SC_, "0"(r0), "r"(r1), "r"(r2)); \
+
+#define _SYSCALL4(_SC_, _a_, _b_, _c_, _d_) \
+   register long r0 __asm__("r0") = _SCC(_a_); \
+   register long r1 __asm__("r1") = _SCC(_b_); \
+   register long r2 __asm__("r2") = _SCC(_c_); \
+   register long r3 __asm__("r3") = _SCC(_d_); \
+   _SYSCALL_ARGS(_SC_, "0"(r0), "r"(r1), "r"(r2), "r"(r3)); \
+
+#endif // SYSCALL_CP
+
+static inline uint32_t
+sd_softdevice_enable(nrf_clock_lf_cfg_t const * p_clock_lf_cfg, nrf_fault_handler_t fault_handler) {
+   _SYSCALL2(SD_SOFTDEVICE_ENABLE, p_clock_lf_cfg, fault_handler);
+}
+
+static inline uint32_t
+sd_softdevice_disable(void) {
+   _SYSCALL0(SD_SOFTDEVICE_DISABLE);
+}
+
+static inline uint32_t
+sd_softdevice_is_enabled(uint8_t * p_softdevice_enabled) {
+   _SYSCALL1(SD_SOFTDEVICE_IS_ENABLED, p_softdevice_enabled);
+}
+
+static inline uint32_t
+sd_softdevice_vector_table_base_set(uint32_t address) {
+   _SYSCALL1(SD_SOFTDEVICE_VECTOR_TABLE_BASE_SET, address);
+}
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // _CLANG_NRF_SDM_H_
+
+#endif // __clang__
+

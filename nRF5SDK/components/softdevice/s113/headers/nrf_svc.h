@@ -62,6 +62,9 @@ extern "C" {
 #ifndef SVCALL
 #if defined (__CC_ARM)
 #define SVCALL(number, return_type, signature) return_type __svc(number) signature
+#elif defined(__clang__)
+#define SVCALL(number, return_type, signature) \
+   static inline return_type signature;
 #elif defined (__GNUC__)
 #ifdef __cplusplus
 #define GCC_CAST_CPP (uint16_t)
