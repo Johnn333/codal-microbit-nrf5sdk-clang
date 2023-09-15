@@ -2,7 +2,6 @@
 // This patch applied https://github.com/eblot/nrf5-llvm/blob/a76179789fe3df6c9e44e2acd93c6b7ed4bfe330/nrfsvc.py
 // Changes can be seen from line 70
 
-
 /*
  * Copyright (c) 2012 - 2019, Nordic Semiconductor ASA
  * All rights reserved.
